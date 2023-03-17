@@ -7,6 +7,12 @@
 
 https://user-images.githubusercontent.com/112580728/226049549-e61bddb3-88ea-4953-893d-9993dd165180.mp4
 
+# Requirements
+
+OpenCV: ```pip install opencv-python```
+
+Imagemagick library: https://imagemagick.org/script/download.php
+
 ## Basic guide:
 Differential frame interpolation analyzes the stability of the original video, and processes the generated video with that information. Example, if your original background is static, it will force the generated video to respect that, acting as a complex deflicker. It is an aggressive process, for which we need and will have a lot of control.
 
@@ -41,8 +47,4 @@ The best, best way to use this tool is to use our "stabilized" video in img2img,
 Automatic1111 extension. Given my limited knowledge of programming, I had trouble getting my script to interact within A1111. I hope soon to solve details to integrate this tool.
 Also, there are many important utilities that are in development, waiting to be added soon, such as polar rendering (like "front/back", but more complex), luminosity deflicker, blend deflicker, gif viewer, source analysis, preprocessing, etc.
 
-# Requirements
 
-OpenCV: ```pip install opencv-python```
-
-Imagemagick library: https://imagemagick.org/script/download.php
