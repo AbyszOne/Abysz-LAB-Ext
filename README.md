@@ -1,5 +1,5 @@
 # Abysz AI temporal coherence lab. 
-## Gradio GUI Alpha 0.0.6
+## Automatic1111 extension. Alpha 0.0.6
 
 ![Captura de pantalla (78)](https://user-images.githubusercontent.com/112580728/226038679-cf819a24-f930-43c3-bd7a-a2b20322e672.png)
 
