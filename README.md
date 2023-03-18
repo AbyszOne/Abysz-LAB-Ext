@@ -16,7 +16,7 @@ Imagemagick library: https://imagemagick.org/script/download.php
 ## Basic guide:
 Differential frame interpolation analyzes the stability of the original video, and processes the generated video with that information. Example, if your original background is static, it will force the generated video to respect that, acting as a complex deflicker. It is an aggressive process, for which we need and will have a lot of control.
 
-Gui version 0.0.5 includes the following parameters.
+Gui version 0.0.6 includes the following parameters.
 
 **Frame refresh frequency:** Every how many frames the interpolation is reduced. It allows to keep more information of the generated video, and avoid major ghosting.
 
