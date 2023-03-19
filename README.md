@@ -1,9 +1,9 @@
 # Abysz AI temporal coherence lab. 
 ## Automatic1111 Extension. Alpha 0.0.8
 
-![Captura de pantalla (78)](https://user-images.githubusercontent.com/112580728/226049449-07b4cc76-55e3-4019-9bef-608feff156f7.png)
+![Captura de pantalla (79)](https://user-images.githubusercontent.com/112580728/226178563-97d8f1d8-0a29-468e-b4e2-aacaf40cee80.png)
 
-
+## How DFI works:
 
 https://user-images.githubusercontent.com/112580728/226049549-e61bddb3-88ea-4953-893d-9993dd165180.mp4
 
@@ -30,7 +30,7 @@ Gui version 0.0.6 includes the following parameters.
 
 **Source denoise:** Improves scanning in noisy sources.
 
-(BLEND DEFLICKER ADDED)
+(DEFLICKERS PLAYGROUND ADDED)
 
 # USE STRATEGIES:
 
@@ -45,6 +45,6 @@ The best, best way to use this tool is to use our "stabilized" video in img2img,
 
 # TODO
 Automatic1111 extension. Given my limited knowledge of programming, I had trouble getting my script to interact within A1111. I hope soon to solve details to integrate this tool.
-Also, there are many important utilities that are in development, waiting to be added soon, such as polar rendering (like "front/back", but more complex), luminosity deflicker, blend deflicker, gif viewer, source analysis, preprocessing, etc.
+Also, there are many important utilities that are in development, waiting to be added soon, such as polar rendering (like "front/back", but more complex), gif viewer, source analysis, preprocessing, etc.
 
 
