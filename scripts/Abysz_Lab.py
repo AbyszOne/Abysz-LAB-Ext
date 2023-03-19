@@ -51,7 +51,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur
                 if file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png"):
                     img = Image.open(os.path.join(ruta_entrada_1, file))
                     rgb_img = img.convert('RGB')
-                    rgb_img.save(os.path.join("./extensions/Abysz-lab/scripts/Run/Source", file), "jpeg", quality=100)
+                    rgb_img.save(os.path.join("./extensions/Abysz-LAB-Ext/scripts/Run/Source", file), "jpeg", quality=100)
                     count += 1
                     if frames_limit > 0 and count >= frames_limit:
                         break
@@ -69,7 +69,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur
             gen_folder = ruta_entrada_2
             
             # Carpeta donde se encuentran las imágenes de FULL
-            full_folder = "./extensions/Abysz-lab/scripts/Run/Source"
+            full_folder = "./extensions/Abysz-LAB-Ext/scripts/Run/Source"
             
             # Obtener la primera imagen en la carpeta Gen
             gen_images = os.listdir(gen_folder)
@@ -106,7 +106,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur
         sresize(ruta_entrada_2)
             
         def s_g_rename(ruta_entrada_2):
-            source_dir = "./extensions/Abysz-lab/scripts/Run/Source" # ruta de la carpeta "Source"
+            source_dir = "./extensions/Abysz-LAB-Ext/scripts/Run/Source" # ruta de la carpeta "Source"
             
             # Obtener una lista de los nombres de archivo en la carpeta "Source"
             files = os.listdir(source_dir)
