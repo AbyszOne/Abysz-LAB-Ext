@@ -152,7 +152,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur
         def denoise(denoise_blur):
             denoise_kernel = denoise_blur
             # Obtener la lista de nombres de archivos en la carpeta source
-            files = os.listdir("./extensions/Abysz-lab/scripts/Run/Source")
+            files = os.listdir("./extensions/Abysz-LAB-Ext/scripts/Run/Source")
             
             # Crear una carpeta destino si no existe
             #if not os.path.exists("dest"):
@@ -161,7 +161,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur
             # Recorrer cada archivo en la carpeta source
             for file in files:
                 # Leer la imagen con opencv
-                img = cv2.imread(os.path.join("./extensions/Abysz-lab/scripts/Run/Source", file))
+                img = cv2.imread(os.path.join("./extensions/Abysz-LAB-Ext/scripts/Run/Source", file))
             
                 # Aplicar el filtro de blur con un tamaño de kernel 5x5
                 dst = cv2.blur(img, (denoise_kernel, denoise_kernel))
@@ -170,15 +170,15 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur
                 #os.remove(os.path.join("SourceDFI", file))
             
                 # Guardar la imagen resultante en la carpeta destino con el mismo nombre
-                cv2.imwrite(os.path.join("./extensions/Abysz-lab/scripts/Run/Source", file), dst)
+                cv2.imwrite(os.path.join("./extensions/Abysz-LAB-Ext/scripts/Run/Source", file), dst)
                 
         denoise(denoise_blur)    
         
         # Definir la carpeta donde están los archivos
-        carpeta = './extensions/Abysz-lab/scripts/Run/Source'
+        carpeta = './extensions/Abysz-LAB-Ext/scripts/Run/Source'
         
         # Crear la carpeta MaskD si no existe
-        os.makedirs('./extensions/Abysz-lab/scripts/Run/MaskD', exist_ok=True)
+        os.makedirs('./extensions/Abysz-LAB-Ext/scripts/Run/MaskD', exist_ok=True)
         
         # Inicializar contador
         contador = 1
@@ -194,7 +194,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur
                 # Aplicar un umbral y guardar la imagen resultante en la carpeta MaskD. Menos es más.
                 umbral = umbral_size
                 umbralizado = cv2.threshold(diff, umbral, 255, cv2.THRESH_BINARY_INV)[1] # Invertir los colores
-                cv2.imwrite(os.path.join('./extensions/Abysz-lab/scripts/Run/MaskD', f'{contador-1:03d}.png'), umbralizado)
+                cv2.imwrite(os.path.join('./extensions/Abysz-LAB-Ext/scripts/Run/MaskD', f'{contador-1:03d}.png'), umbralizado)
         
             anterior = cv2.imread(os.path.join(carpeta, filename), cv2.IMREAD_GRAYSCALE)
             contador += 1
@@ -205,9 +205,9 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur
         
         
         # Obtener la lista de los nombres de los archivos en la carpeta MaskD
-        files = os.listdir("./extensions/Abysz-lab/scripts/Run/MaskD")
+        files = os.listdir("./extensions/Abysz-LAB-Ext/scripts/Run/MaskD")
         # Definir la carpeta donde están los archivos
-        carpeta = "./extensions/Abysz-lab/scripts/Run/MaskD"
+        carpeta = "./extensions/Abysz-LAB-Ext/scripts/Run/MaskD"
         blur_kernel = smooth
         
         # Iterar sobre cada archivo
@@ -217,7 +217,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur
                 continue
             # Leer la imagen de la carpeta MaskD
             #img = cv2.imread("MaskD" + file)
-            img = cv2.imread(os.path.join("./extensions/Abysz-lab/scripts/Run/MaskD", file))
+            img = cv2.imread(os.path.join("./extensions/Abysz-LAB-Ext/scripts/Run/MaskD", file))
             
             # Invertir la imagen usando la función bitwise_not()
             img_inv = cv2.bitwise_not(img)
@@ -234,7 +234,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur
             # Sobrescribir la imagen en la carpeta MaskD con el mismo nombre que el original
             #cv2.imwrite("MaskD" + file, img_out)
             #cv2.imwrite(os.path.join("MaskD", file, img_out))
-            filename = os.path.join("./extensions/Abysz-lab/scripts/Run/MaskD", file)
+            filename = os.path.join("./extensions/Abysz-LAB-Ext/scripts/Run/MaskD", file)
             cv2.imwrite(filename, img_out)
     
         # Iterar a través de los archivos de imagen en la carpeta MaskD
