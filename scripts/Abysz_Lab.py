@@ -26,10 +26,10 @@ class Script(scripts.Script):
         
 def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur, dfi_strength, frame_refresh_frequency, refresh_strength, smooth, dfi_deghost, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength):
             
-        maskD = os.path.join(os.getcwd(), 'extensions', 'Abysz-lab', 'scripts', 'Run', 'MaskD')
-        maskS = os.path.join(os.getcwd(), 'extensions', 'Abysz-lab', 'scripts', 'Run', 'MaskS')
+        maskD = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'MaskD')
+        maskS = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'MaskS')
         #output = os.path.join(os.getcwd(), 'extensions', 'Abysz-lab', 'scripts', 'Run', 'Output')
-        source = os.path.join(os.getcwd(), 'extensions', 'Abysz-lab', 'scripts', 'Run', 'Source')
+        source = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'Source')
         #gen = os.path.join(os.getcwd(), 'extensions', 'Abysz-lab', 'scripts', 'Run', 'Gen')
 
         
