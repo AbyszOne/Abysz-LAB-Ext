@@ -1,5 +1,5 @@
 # Abysz AI temporal coherence lab. 
-## Automatic1111 Extension. Alpha 0.0.6
+## Automatic1111 Extension. Alpha 0.0.8
 
 ![Captura de pantalla (78)](https://user-images.githubusercontent.com/112580728/226049449-07b4cc76-55e3-4019-9bef-608feff156f7.png)
 
