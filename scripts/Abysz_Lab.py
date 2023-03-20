@@ -2,6 +2,7 @@ import gradio as gr
 import subprocess
 import os
 import imageio
+import numpy as np
 from gradio.outputs import Image
 from PIL import Image
 import sys
@@ -24,7 +25,7 @@ class Script(scripts.Script):
     def ui(self, is_img2img):
         return []
         
-def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur, dfi_strength, frame_refresh_frequency, refresh_strength, smooth, dfi_deghost, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength):
+def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, frame_refresh_frequency, refresh_strength, smooth, dfi_deghost, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
             
         maskD = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'MaskD')
         maskS = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'MaskS')
@@ -348,7 +349,6 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur
             # Aumentar el contador de bucles
             loop_count += 1
             
- 
 def dyndef(ruta_entrada_3, ruta_salida_1, ddf_strength):
     if ddf_strength <= 0: # Condición 1: strength debe ser mayor a 0
         return
@@ -389,6 +389,57 @@ def overlay_images(image1_path, image2_path, over_strength):
     # Alinear el tamaño de las imágenes
     if image1.size != image2.size:
         image2 = image2.resize(image1.size)
+
+    # Convertir las imágenes en matrices NumPy
+    np_image1 = np.array(image1).astype(np.float64) / 255.0
+    np_image2 = np.array(image2).astype(np.float64) / 255.0
+
+    # Aplicar el método de fusión "overlay" a las imágenes
+    def basic(target, blend, opacity):
+        return target * opacity + blend * (1-opacity)
+
+    def blender(func):
+        def blend(target, blend, opacity=1, *args):
+            res = func(target, blend, *args)
+            res = basic(res, blend, opacity)
+            return np.clip(res, 0, 1)
+        return blend
+
+    class Blend:
+        @classmethod
+        def method(cls, name):
+            return getattr(cls, name)
+
+        normal = basic
+
+        @staticmethod
+        @blender
+        def overlay(target, blend, *args):
+            return  (target>0.5) * (1-(2-2*target)*(1-blend)) +\
+                    (target<=0.5) * (2*target*blend)
+
+    blended_image = Blend.overlay(np_image1, np_image2, opacity)
+
+    # Convertir la matriz de vuelta a una imagen PIL
+    blended_image = Image.fromarray((blended_image * 255).astype(np.uint8), 'RGBA').convert('RGB')
+
+    # Guardar la imagen resultante
+    return blended_image
+    
+def overlay_images2(image1_path, image2_path, fuse_strength):
+      
+    opacity = fuse_strength
+    
+    try:
+        image1 = Image.open(image1_path).convert('RGBA')
+        image2 = Image.open(image2_path).convert('RGBA')
+    except:
+        print("No more frames to fuse.")
+        return
+
+    # Alinear el tamaño de las imágenes
+    if image1.size != image2.size:
+        image1 = image1.resize(image2.size)
 
     # Convertir las imágenes en matrices NumPy
     np_image1 = np.array(image1).astype(np.float64) / 255.0
@@ -468,6 +519,33 @@ def overlay_run(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength):
         destino = os.path.join(ruta_salida_1, archivo)
         shutil.move(origen, destino)
 
+def over_fuse(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, frame_refresh_frequency, refresh_strength, smooth, dfi_deghost, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+    # Obtener una lista de todos los archivos en la carpeta "Gen"
+    gen_files = os.listdir(ruta_entrada_4)
+    
+    # Ordenar la lista de archivos alfabéticamente
+    gen_files.sort()
+    
+    # Obtener una lista de todos los archivos en la carpeta "Source"
+    source_files = os.listdir(ruta_entrada_5)
+    
+    # Ordenar la lista de archivos alfabéticamente
+    source_files.sort()
+    
+    if not os.path.exists(ruta_salida_2):
+            os.makedirs(ruta_salida_2)
+            
+    for i in range(len(gen_files)):
+        image1_path = os.path.join(ruta_entrada_4, gen_files[i])
+        image2_path = os.path.join(ruta_entrada_5, source_files[i])
+        blended_image = overlay_images2(image1_path, image2_path, fuse_strength)
+        try:
+            blended_image.save(os.path.join(ruta_salida_2, gen_files[i]))
+        except Exception as e:
+            print("Error al guardar la imagen:", str(e))
+            print("No more frames to fuse")
+            break
+
 
 def norm(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength):
     if norm_strength <= 0: # Condición 1: Norm_strength debe ser mayor a 0
@@ -518,73 +596,168 @@ def norm(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_streng
         destino = os.path.join(ruta_salida_1, archivo)
         shutil.move(origen, destino)
         
-def deflickers(ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur, dfi_strength, frame_refresh_frequency, refresh_strength, smooth, dfi_deghost, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength):
+def deflickers(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, frame_refresh_frequency, refresh_strength, smooth, dfi_deghost, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
     dyndef(ruta_entrada_3, ruta_salida_1, ddf_strength)
     overlay_run(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength)
     norm(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength)
+    
+def extract_video(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, frame_refresh_frequency, refresh_strength, smooth, dfi_deghost, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+
+    # Ruta del archivo de video
+    filename = ruta_entrada_6
+
+    # Directorio donde se guardarán los frames extraídos
+    output_dir = ruta_salida_3
+
+    # Abrir el archivo de video
+    cap = cv2.VideoCapture(filename)
+
+    # Obtener los FPS originales del video
+    fps = cap.get(cv2.CAP_PROP_FPS)
+
+    # Si fps_count es 0, utilizar los FPS originales
+    if fps_count == 0:
+        fps_count = fps
+
+    # Calcular el tiempo entre cada frame a extraer en milisegundos
+    frame_time = int(round(1000 / fps_count))
+
+    # Crear el directorio de salida si no existe
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # Inicializar el contador de frames
+    frame_count = 0
+
+    # Inicializar el tiempo del último frame extraído
+    last_frame_time = 0
+
+    # Iterar sobre los frames del video
+    while True:
+        # Leer el siguiente frame
+        ret, frame = cap.read()
+
+        # Si no se pudo leer un frame, salir del loop
+        if not ret:
+            break
+
+        # Calcular el tiempo actual del frame en milisegundos
+        current_frame_time = int(round(cap.get(cv2.CAP_PROP_POS_MSEC)))
+
+        # Si todavía no ha pasado suficiente tiempo desde el último frame extraído, saltar al siguiente frame
+        if current_frame_time - last_frame_time < frame_time:
+            continue
+
+        # Incrementar el contador de frames
+        frame_count += 1
+
+        # Construir el nombre del archivo de salida
+        output_filename = os.path.join(output_dir, 'frame_{:03d}.jpeg'.format(frame_count))
+
+        # Guardar el frame como una imagen
+        cv2.imwrite(output_filename, frame)
+
+        # Actualizar el tiempo del último frame extraído
+        last_frame_time = current_frame_time
+
+    # Cerrar el archivo de video
+    cap.release()
+
+    # Mostrar información sobre el proceso finalizado
+    print("Extracted {} frames.".format(frame_count))
+
+
     
 def add_tab():
     print('LAB')
     with gr.Blocks(analytics_enabled=False) as demo:
         with gr.Tabs():
-            with gr.Tab("Settings"):
+            with gr.Tab("Main"):
+                with gr.Row():
+                    with gr.Column():
+                        with gr.Column():
+                            gr.Markdown("# Abysz LAB 0.0.9b. Temporal coherence tools")
+                            gr.Markdown("## DFI Render")
+                        with gr.Column():
+                            ruta_entrada_1 = gr.Textbox(label="Original frames folder", placeholder="Unless you have used --just resize-- with different aspect ratios, any source will work.")
+                            ruta_entrada_2 = gr.Textbox(label="Generated frames folder", placeholder="The frames of AI generated video")
+                            ruta_salida = gr.Textbox(label="Output folder", placeholder="Remember that each generation overwrites previous frames in the same folder.")
+                        with gr.Accordion("Info", open=False):
+                            gr.Markdown("**Source denoise:** The dynamic map scan is sensitive to noise. If your source is not very clean, you may want to add a soft blur to remove impurities. This does not modify the original.")
+                            gr.Markdown("**DFI Tolerance:** Determines the movement tolerance of the scan. Low values will detect even small changes in static areas. You probably don't want this. High values will detect only large movements.")
+                            gr.Markdown("**Corruption Refresh:** To reduce the distortion generated by the process, you can recover original information every X number of frames. Lower number = faster refresh.")
+                            gr.Markdown("**Corruption Preserve:** Here you decide how much corruption keep in each corruption refresh. Low values will recover more of the original frame, with its changes and flickering, in exchange for reducing corruption. You must find the balance that works best for your goal.")
+                            gr.Markdown("**Smooth:** This smoothes the edges of the interpolated areas. Low values are currently recommended until the algorithm is updated.")
+                            gr.Markdown("**DFI Expand:** Fatten the edges of the DFI map. It can be used as a complement to DFI tolerance to control edge ghosting. 0=Off.")
+                        with gr.Row():
+                            denoise_blur = gr.Slider(minimum=1, maximum=10, value=3, step=1, label="Source Denoise")
+                            dfi_strength = gr.Slider(minimum=1, maximum=10, value=5, step=0.5, label="DFI Tolerance")
+                        with gr.Row():
+                            frame_refresh_frequency = gr.Slider(minimum=1, maximum=30, value=5, step=1, label="Corruption Refresh (Lower = Faster)")
+                            refresh_strength = gr.Slider(minimum=0, maximum=100, value=50, step=5, label="Corruption Preserve")
+                        with gr.Row():
+                            smooth = gr.Slider(minimum=1, maximum=99, value=11, step=2, label="Smooth")
+                            dfi_deghost = gr.Slider(minimum=0, maximum=10, value=0, step=1, label="DFI Expand")
+                        with gr.Row():
+                            frames_limit = gr.Number(label="Frames to render. 0=ALL")
+                            run_button = gr.Button(value="DFI", variant="primary")
+                            output_placeholder = gr.Textbox(label="Status", placeholder="STAND BY...")
+                    with gr.Column():
+                        with gr.Column():
+                            gr.Markdown("# |")
+                            gr.Markdown("## Deflickers Playground")
+                            with gr.Column():
+                                ruta_entrada_3 = gr.Textbox(label="Frames folder", placeholder="Frames to process")
+                                ruta_salida_1 = gr.Textbox(label="Output folder", placeholder="Processed frames")
+                                with gr.Accordion("Info", open=False):
+                                    gr.Markdown("I made this series of deflickers based on the standard that Vegas Pro includes. You can use them together or separately. Be careful when mixing them.")
+                                    gr.Markdown("**Blend:** Blends a percentage of the previous frame with the next. This can soften transitions and highlights. High values will add too much information.")
+                                    gr.Markdown("**Overlay:** Use the overlay image blending mode. Note that it works particularly good at mid-high values, wich will modify the overall contrast. You will have to decide what works for you.")
+                                    gr.Markdown("**Normalize:** Calculates the average between frames to merge them. It may be more practical if you don't have a specific Blend deflicker value in mind.")
+                                ddf_strength = gr.Slider(minimum=0, maximum=1, value=0, step=0.01, label="BLEND (0=Off)")
+                                over_strength = gr.Slider(minimum=0, maximum=1, value=0, step=0.01, label="OVERLAY (0=Off)")
+                                norm_strength = gr.Slider(minimum=0, maximum=1, value=0, step=1, label="NORMALIZE (0=Off))")
+                                dfk_button = gr.Button(value="Deflickers")
+            with gr.Tab("LAB Tools"):
                 with gr.Column():
-                    gr.Markdown("# Abysz LAB 0.0.8. Temporal coherence tools")
-                    gr.Markdown("## DFI Parameters")
-                with gr.Row():
-                    ruta_entrada_1 = gr.Textbox(label="Original frames folder", placeholder="Unless you have used --just resize-- with different aspect ratios, any source will work.")
-                    ruta_entrada_2 = gr.Textbox(label="Generated frames folder", placeholder="The frames of AI generated video")
-                ruta_salida = gr.Textbox(label="Output folder", placeholder="Remember that each generation overwrites previous frames in the same folder.")
-                with gr.Accordion("Info", open=False):
-                    gr.Markdown("**Source denoise:** The dynamic map scan is sensitive to noise. If your source is not very clean, you may want to add a soft blur to remove impurities. This does not modify the original.")
-                    gr.Markdown("**DFI Strength:** This controls the sensitivity of the scan. For example, a low value will find too much detail even in apparently static areas, which is not recommended, and a high value will not detect minor movement.")
-                    gr.Markdown("**Frame Refresh:** To control corruption, inevitable in such an aggressive process, you can refresh a frame every X cycles.")
-                    gr.Markdown("**Refresh Control:** Here you decide how much interpolation % you allow in each refresh. The lower, the more similar it will be to the original frame. This will refresh the corruption, but it will also allow flicking.")
-                    gr.Markdown("**Smooth:** This smoothes the edges of the interpolated areas. Low values are currently recommended until the algorithm is updated.")
-                    gr.Markdown("**DFI Deghost:** This artificially fattens the edges of the areas to be interpolated. This can be useful if you don't want to change DFI Strength but need to reduce ghosting. Experimental. 0=Off.")
-                with gr.Row():
-                    frames_limit = gr.Number(label="Frames to render. 0:ALL")
-                    denoise_blur = gr.Slider(minimum=1, maximum=10, value=3, step=1, label="Source denoise")
-                    dfi_strength = gr.Slider(minimum=1, maximum=10, value=5, step=0.5, label="DFI Strength")
-                    frame_refresh_frequency = gr.Slider(minimum=1, maximum=30, value=5, step=1, label="Frame Refresh")
-                    refresh_strength = gr.Slider(minimum=0, maximum=100, value=50, step=5, label="Refresh Control")
-                    smooth = gr.Slider(minimum=1, maximum=99, value=11, step=2, label="Smooth")
-                    dfi_deghost = gr.Slider(minimum=0, maximum=10, value=0, step=1, label="DFI Deghost")
-                with gr.Row():
-                    run_button = gr.Button(label="Run", variant="primary")
-                    output_placeholder = gr.Textbox(label="Status")
-                with gr.Column():
-                    gr.Markdown("## Deflickers playground")
+                    gr.Markdown("## Style Fuse")
                     with gr.Accordion("Info", open=False):
-                        gr.Markdown("I made this series of deflickers based on the standard that Vegas Pro includes. You can use them together or separately. Be careful when mixing them.")
-                        gr.Markdown("**Blend:** Blends a percentage of the previous frame with the next. This can soften transitions and highlights. High values will add too much information.")
-                        gr.Markdown("**Overlay:** Use the overlay image blending mode. Although it can be effective in reducing changes, note that this will modify the contrast. You will have to decide if it works for you.")
-                        gr.Markdown("**Normalize:** Calculates the average between frames to merge them. It may be more practical if you don't have a specific Blend deflicker value in mind.")
-                with gr.Row():
-                    with gr.Column():
-                        ruta_entrada_3 = gr.Textbox(label="Frames folder", placeholder="Frames to process")
-                        ruta_salida_1 = gr.Textbox(label="Output folder", placeholder="Processed frames")
-                        dfk_button = gr.Button(label="Run")
-                    with gr.Column():
-                        ddf_strength = gr.Slider(minimum=0, maximum=1, value=0, step=0.01, label="BLEND (0=Off)")
-                        over_strength = gr.Slider(minimum=0, maximum=1, value=0, step=0.01, label="OVERLAY (0=Off)")
-                        norm_strength = gr.Slider(minimum=0, maximum=1, value=0, step=1, label="NORMALIZE (0=Off))")
-                    
-            with gr.Tab("Lab Tools"):
-                with gr.Row():
-                    with gr.Column():
-                        gr.Markdown("# Coming Soon")
+                                    gr.Markdown("With this you can merge two sets of frames with overlay technique. For example, you can take a style video that is just lights and/or colors, and overlay it on top of another video.")
+                                    gr.Markdown("The resulting video will be useful for use in Img2Img Batch and that the AI render preserves these added color and lighting details, along with the details of the original video.")
+                    with gr.Row():
+                        ruta_entrada_4 = gr.Textbox(label="Style frames", placeholder="Style to fuse")
+                        ruta_entrada_5 = gr.Textbox(label="Video frames", placeholder="Frames to process")
+                    with gr.Row():
+                        ruta_salida_2 = gr.Textbox(label="Output folder", placeholder="Processed frames")   
+                        fuse_strength = gr.Slider(minimum=0.1, maximum=1, value=0.5, step=0.01, label="Fuse Strength")
+                        fuse_button = gr.Button(value="Fuse")
+                    gr.Markdown("## Video extract")
+                    with gr.Row():
+                        ruta_entrada_6 = gr.Textbox(label="Video path", placeholder="Remember to use same fps as generated video for DFI")
+                        ruta_salida_3 = gr.Textbox(label="Output folder", placeholder="Processed frames")
+                    with gr.Row():
+                        fps_count = gr.Number(label="Fps. 0=Original")
+                        vidextract_button = gr.Button(value="Extract")
+                    output_placeholder2 = gr.Textbox(label="Status", placeholder="STAND BY...") 
             with gr.Tab("Guide"):
                 with gr.Column():
                     gr.Markdown("# What DFI does?")
                     with gr.Accordion("Info", open=False):
-                        gr.Markdown("DFI processing analyzes the motion of the original video, and attempts to force that information into the generated video. (Demo on github page)")
+                        gr.Markdown("DFI processing analyzes the motion of the original video, and attempts to force that information into the generated video. Demo on https://github.com/AbyszOne/Abysz-LAB-Ext")
                         gr.Markdown("For example, for a man smoking, leaning against a pole, it will detect that the pole is static, and will try to prevent it from changing as much as possible.")
-                        gr.Markdown("This is an aggressive process that requires a lot of control for each context. Read the recommended strategies in the manual: https://github.com/AbyszOne/Abysz_lab")
+                        gr.Markdown("This is an aggressive process that requires a lot of control for each context. Read the recommended strategies.")
                         gr.Markdown("Although Video to Video is the most efficient way, a DFI One Shot method is under experimental development as well.")
-        inputs=[ruta_entrada_1, ruta_entrada_2, ruta_salida, frames_limit, denoise_blur, dfi_strength, frame_refresh_frequency, refresh_strength, smooth, dfi_deghost, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength]
+                    gr.Markdown("# Usage strategies")
+                    with gr.Accordion("Info", open=False):
+                        gr.Markdown("If you get enough understanding of the tool, you can achieve a much more stable and clean enough rendering. However, this is quite demanding.")
+                        gr.Markdown("Instead, a much friendlier and faster way to use this tool is as an intermediate step. For this, you can allow a reasonable degree of corruption in exchange for more general stability. ")
+                        gr.Markdown("You can then clean up the corruption and recover details with a second step in Stable Diffusion at low denoising (0.2-0.4), using the same parameters and seed.")
+                        gr.Markdown("In this way, the final result will have the stability that we have gained, maintaining final detail. If you find a balanced workflow, you will get something at least much more coherent and stable than the raw AI render.")
+        inputs=[ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, frame_refresh_frequency, refresh_strength, smooth, dfi_deghost, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count]
         run_button.click(fn=main, inputs=inputs, outputs=output_placeholder)
         dfk_button.click(fn=deflickers, inputs=inputs, outputs=output_placeholder)
+        fuse_button.click(fn=over_fuse, inputs=inputs, outputs=output_placeholder2)
+        vidextract_button.click(fn=extract_video, inputs=inputs, outputs=output_placeholder2)
     return [(demo, "Abysz LAB", "demo")]
         
 script_callbacks.on_ui_tabs(add_tab)
