@@ -2,6 +2,7 @@
 ## Automatic1111 Extension. Alpha 0.0.9b
 
 ![ABYSZLAB09](https://user-images.githubusercontent.com/112580728/226314383-10fa8333-0973-476d-a3a8-61ce488f0c71.png)
+|
 ![ABYSZLAB09b](https://user-images.githubusercontent.com/112580728/226314389-ac838672-4af0-4d94-bde8-26fd83610a5f.png)
 
 ## How DFI works:
