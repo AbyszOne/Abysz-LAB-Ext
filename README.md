@@ -1,7 +1,9 @@
 # Abysz AI temporal coherence lab. 
 ## Automatic1111 Extension. Alpha 0.0.9b
 
-![Captura de pantalla (79)](https://user-images.githubusercontent.com/112580728/226178563-97d8f1d8-0a29-468e-b4e2-aacaf40cee80.png)
+![Captura de pantalla (81)](https://user-images.githubusercontent.com/112580728/226313662-c780a43c-70e5-492b-97f8-6fe107e8a5fd.png)
+![Captura de pantalla (80)](https://user-images.githubusercontent.com/112580728/226313669-fdf02df5-8c9b-4d74-b7dd-8ecc7c9e3094.png)
+
 
 ## How DFI works:
 
