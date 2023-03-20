@@ -33,6 +33,7 @@ Gui version 0.0.6 includes the following parameters.
 **Source denoise:** Improves scanning in noisy sources.
 
 (DEFLICKERS PLAYGROUND ADDED)
+(FUSE AND VIDEO EXTRACT ADDED)
 
 # USE STRATEGIES:
 
