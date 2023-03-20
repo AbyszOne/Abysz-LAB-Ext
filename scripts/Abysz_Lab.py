@@ -488,6 +488,9 @@ def overlay_run(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength):
     if not os.path.exists("overtemp"):
             os.makedirs("overtemp")
             
+    if not os.path.exists(ruta_salida_1):
+            os.makedirs(ruta_salida_1)
+            
     gen_path = ruta_entrada_3
     images = os.listdir(gen_path)
     image1_path = os.path.join(gen_path, images[0])
@@ -518,6 +521,22 @@ def overlay_run(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength):
         origen = os.path.join(ruta_overtemp, archivo)
         destino = os.path.join(ruta_salida_1, archivo)
         shutil.move(origen, destino)
+        
+    # Ajustar contraste y brillo para cada imagen en la carpeta de entrada
+    if over_strength >= 0.4:
+        for nombre_archivo in os.listdir(ruta_salida_1):
+            # Cargar imagen
+            ruta_archivo = os.path.join(ruta_salida_1, nombre_archivo)
+            img = cv2.imread(ruta_archivo)
+        
+            # Ajustar contraste y brillo
+            alpha = 1  # Factor de contraste (mayor que 1 para aumentar el contraste)
+            beta = 10  # Valor de brillo (entero positivo para aumentar el brillo)
+            img_contrast = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
+        
+            # Guardar imagen resultante en la carpeta de salida
+            ruta_salida = os.path.join(ruta_salida_1, nombre_archivo)
+            cv2.imwrite(ruta_salida, img_contrast)
 
 def over_fuse(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, frame_refresh_frequency, refresh_strength, smooth, dfi_deghost, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
     # Obtener una lista de todos los archivos en la carpeta "Gen"
