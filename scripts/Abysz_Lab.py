@@ -578,6 +578,9 @@ def norm(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_streng
     if not os.path.exists("normtemp"):
         os.makedirs("normtemp")
         
+    f not os.path.exists(ruta_salida_1):
+            os.makedirs(ruta_salida_1)
+            
     # Obtener una lista de todas las imágenes en la carpeta FuseOver
     img_list = os.listdir(ruta_entrada_3)
     img_list.sort() # Ordenar la lista en orden ascendente
