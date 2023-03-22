@@ -119,7 +119,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
             
             # Obtener una lista de los nombres de archivo en la carpeta "Source"
             files = os.listdir(source_dir)
-            
+            files = sorted(files) # ordenar alfabéticamente la lista
             # Renombrar cada archivo
             for i, file_name in enumerate(files):
                 old_path = os.path.join(source_dir, file_name) # ruta actual del archivo
@@ -133,8 +133,8 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
             gen_dir = ruta_entrada_2 # ruta de la carpeta "Source"
             
             # Obtener una lista de los nombres de archivo en la carpeta ruta_entrada_2
-            files = os.listdir(gen_dir)
-            
+            files2 = os.listdir(gen_dir)
+            files2 = sorted(files2) # ordenar alfabéticamente la lista
             # Renombrar cada archivo
             for i, file_name in enumerate(files):
                 old_path = os.path.join(gen_dir, file_name) # ruta actual del archivo
