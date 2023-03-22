@@ -1,5 +1,5 @@
 # Abysz AI temporal coherence lab. 
-## Automatic1111 Extension. Beta 0.1.4
+## Automatic1111 Extension. Beta 0.1.6
 
 ![ABYSZLAB09](https://user-images.githubusercontent.com/112580728/226314383-10fa8333-0973-476d-a3a8-61ce488f0c71.png)
 |
