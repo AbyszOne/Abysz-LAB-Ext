@@ -369,6 +369,19 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
             # Componer la imagen de MaskS y Gen con disolución (si está definido) y guardarla en la carpeta de salida
             os.system(f"magick composite {'-dissolve ' + str(dissolve) + '%' if dissolve is not None else ''} {maskS}/{filename}.png {ruta_entrada_2}/{filename}{ext} {ruta_salida}/{filename}{ext}")
             
+            # Demo plus bilateral
+            if loop_count % 3 == 0:
+                # listar archivos en la carpeta de salida
+                archivos = os.listdir(ruta_salida)
+                # obtener el último archivo
+                ultimo_archivo = os.path.join(ruta_salida, archivos[-1])
+                # cargar imagen con opencv
+                imagen = cv2.imread(ultimo_archivo)
+                # aplicar filtro bilateral
+                imagen_filtrada = cv2.bilateralFilter(imagen, 9, 9, 9)
+                # sobreescribir el original
+                cv2.imwrite(ultimo_archivo, imagen_filtrada)
+            
             # Obtener el nombre del archivo más bajo en la carpeta MaskD
             maskd_files = [f for f in os.listdir(maskD) if os.path.isfile(os.path.join(maskD, f)) and f.startswith('')]
             if maskd_files:
