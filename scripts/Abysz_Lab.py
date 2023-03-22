@@ -175,7 +175,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
                 img = cv2.imread(os.path.join("./extensions/Abysz-LAB-Ext/scripts/Run/Source", file))
             
                 # Aplicar el filtro de blur con un tamaño de kernel 5x5
-                dst = cv2.bilateralFilter(img, denoise_kernel, 75, 75)
+                dst = cv2.bilateralFilter(img, denoise_kernel, 31, 31)
                 
                 # Eliminar el archivo original
                 #os.remove(os.path.join("SourceDFI", file))
@@ -733,7 +733,7 @@ def add_tab():
                 with gr.Row():
                     with gr.Column():
                         with gr.Column():
-                            gr.Markdown("# Abysz LAB 0.1.2 Temporal coherence tools")
+                            gr.Markdown("# Abysz LAB 0.1.3 Temporal coherence tools")
                             gr.Markdown("## DFI Render")
                         with gr.Column():
                             ruta_entrada_1 = gr.Textbox(label="Original frames folder", placeholder="Unless you have used --just resize-- with different aspect ratios, any source will work.")
@@ -745,7 +745,7 @@ def add_tab():
                             gr.Markdown("**DFI Tolerance:** Determines the movement tolerance of the scan. Low tolerance will detect even small changes in static areas. High values will detect less movements. Ideally, it should detect the movements that are important to you, and skip the static and useless areas, reducing the flick in those. **This parameter commands the new dynamic algorithm.** ")
                             gr.Markdown("**DFI Expand:** DFI expand fattens the edges of the areas detected by DFI. Note: DFI tolerance modifies the amount of movement detected. This only affects that result, be it big or small. Its a complementary parameter. 0=Off.")
                         with gr.Row():
-                            denoise_blur = gr.Slider(minimum=0, maximum=10, value=0, step=1, label="Source Denoise")
+                            denoise_blur = gr.Slider(minimum=0, maximum=50, value=0, step=1, label="Source Denoise")
                             dfi_strength = gr.Slider(minimum=0.5, maximum=15, value=5, step=0.5, label="DFI Tolerance")
                             dfi_deghost = gr.Slider(minimum=0, maximum=10, value=0, step=1, label="DFI Expand")
                         with gr.Accordion("Advanced", open=False):
