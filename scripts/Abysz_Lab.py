@@ -25,7 +25,7 @@ class Script(scripts.Script):
     def ui(self, is_img2img):
         return []
         
-def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, frame_refresh_frequency, refresh_strength, smooth, dfi_deghost, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
             
         maskD = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'MaskD')
         maskS = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'MaskS')
@@ -33,7 +33,14 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
         source = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'Source')
         #gen = os.path.join(os.getcwd(), 'extensions', 'Abysz-lab', 'scripts', 'Run', 'Gen')
 
-        
+        # verificar si las carpetas existen y eliminarlas si es el caso
+        if os.path.exists(source): # verificar si existe la carpeta source
+            shutil.rmtree(source) # eliminar la carpeta source y su contenido
+        if os.path.exists(maskS): # verificar si existe la carpeta maskS
+            shutil.rmtree(maskS) # eliminar la carpeta maskS y su contenido
+        if os.path.exists(maskD): # verificar si existe la carpeta maskS
+            shutil.rmtree(maskD) # eliminar la carpeta maskS y su contenido
+                
         os.makedirs(source, exist_ok=True)
         os.makedirs(maskS, exist_ok=True)
         os.makedirs(ruta_salida, exist_ok=True)
@@ -151,6 +158,9 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
             shutil.copyfile(os.path.join(ruta_entrada_2, first_gen_file), output_file)
         #subprocess call
         def denoise(denoise_blur):
+            if denoise_blur < 1: # Condición 1: strength debe ser mayor a 1
+                return
+                         
             denoise_kernel = denoise_blur
             # Obtener la lista de nombres de archivos en la carpeta source
             files = os.listdir("./extensions/Abysz-LAB-Ext/scripts/Run/Source")
@@ -165,7 +175,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
                 img = cv2.imread(os.path.join("./extensions/Abysz-LAB-Ext/scripts/Run/Source", file))
             
                 # Aplicar el filtro de blur con un tamaño de kernel 5x5
-                dst = cv2.blur(img, (denoise_kernel, denoise_kernel))
+                dst = cv2.bilateralFilter(img, denoise_kernel, 75, 75)
                 
                 # Eliminar el archivo original
                 #os.remove(os.path.join("SourceDFI", file))
@@ -239,14 +249,15 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
             cv2.imwrite(filename, img_out)
     
         # Iterar a través de los archivos de imagen en la carpeta MaskD
-        for imagen in os.listdir(carpeta):
-            if imagen.endswith(".jpg") or imagen.endswith(".png") or imagen.endswith(".jpeg"):
-                # Leer la imagen
-                img = cv2.imread(os.path.join(carpeta, imagen))
-                # Aplicar el filtro
-                img = cv2.GaussianBlur(img, (blur_kernel,blur_kernel),0)
-                # Guardar la imagen con el mismo nombre
-                cv2.imwrite(os.path.join(carpeta, imagen), img)
+        if smooth > 1:
+            for imagen in os.listdir(carpeta):
+                if imagen.endswith(".jpg") or imagen.endswith(".png") or imagen.endswith(".jpeg"):
+                    # Leer la imagen
+                    img = cv2.imread(os.path.join(carpeta, imagen))
+                    # Aplicar el filtro
+                    img = cv2.GaussianBlur(img, (blur_kernel,blur_kernel),0)
+                    # Guardar la imagen con el mismo nombre
+                    cv2.imwrite(os.path.join(carpeta, imagen), img)
         
         
         # INICIO DEL BATCH Obtener el nombre del archivo en MaskD sin ninguna extensión
@@ -268,6 +279,28 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
             mask = mask_files[0]
             maskname = os.path.splitext(mask)[0]
             
+            maskp_path = os.path.join(maskD, mask) 
+
+            img = cv2.imread(maskp_path, cv2.IMREAD_GRAYSCALE) # leer la imagen en escala de grises
+            n_white_pix = np.sum(img == 255) # contar los píxeles que son iguales a 255 (blanco)
+            total_pix = img.size # obtener el número total de píxeles en la imagen
+            percentage = (n_white_pix / total_pix) * 100 # calcular el porcentaje de píxeles blancos
+            percentage = round(percentage, 1) # redondear el porcentaje a 1 decimal
+            
+            # calcular la variable extra
+            extra = 100 - percentage # restar el porcentaje a 100
+            extra = extra / 3 # dividir el resultado por 3
+            extra = math.ceil(extra) # redondear hacia arriba al entero más cercano
+            if extra % 2 == 0: # verificar si el número es par
+                extra = extra + 1 # sumarle 1 para hacerlo impar
+            
+            # Dynamic Blur
+            imgb = cv2.imread(maskp_path) # leer la imagen con opencv
+            img_blur = cv2.GaussianBlur(imgb, (extra,extra),0)
+
+            # guardar la imagen modificada con el mismo nombre y ruta
+            cv2.imwrite(maskp_path, img_blur)
+
             # Obtener la ruta de la imagen en la subcarpeta de output que tiene el mismo nombre que la imagen en MaskD
             output_files = [f for f in os.listdir(ruta_salida) if os.path.splitext(f)[0] == maskname]
             if not output_files:
@@ -307,9 +340,11 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
             os.chdir(original_dir)
             
             # Establecer un valor predeterminado para disolución
-            dissolve = 100 if loop_count % frame_refresh_frequency != 0 else refresh_strength
-            #slider2 = gr.inputs.Slider(minimum=0, maximum=100, default=50, step=5, label="FPR Strength")
-        
+            if frame_refresh_frequency < 1:
+                dissolve = percentage
+            else:
+                dissolve = 100 if loop_count % frame_refresh_frequency != 0 else refresh_strength
+                    
         
             # Obtener el nombre del archivo en MaskS sin la extensión
             maskS_files = [f for f in os.listdir(maskS) if os.path.isfile(os.path.join(maskS, f)) and f.endswith('.png')]
@@ -618,12 +653,12 @@ def norm(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_streng
         destino = os.path.join(ruta_salida_1, archivo)
         shutil.move(origen, destino)
         
-def deflickers(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, frame_refresh_frequency, refresh_strength, smooth, dfi_deghost, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+def deflickers(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
     dyndef(ruta_entrada_3, ruta_salida_1, ddf_strength)
     overlay_run(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength)
     norm(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength)
     
-def extract_video(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, frame_refresh_frequency, refresh_strength, smooth, dfi_deghost, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+def extract_video(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
 
     # Ruta del archivo de video
     filename = ruta_entrada_6
@@ -698,28 +733,30 @@ def add_tab():
                 with gr.Row():
                     with gr.Column():
                         with gr.Column():
-                            gr.Markdown("# Abysz LAB 0.0.9b. Temporal coherence tools")
+                            gr.Markdown("# Abysz LAB 0.1.2 Temporal coherence tools")
                             gr.Markdown("## DFI Render")
                         with gr.Column():
                             ruta_entrada_1 = gr.Textbox(label="Original frames folder", placeholder="Unless you have used --just resize-- with different aspect ratios, any source will work.")
                             ruta_entrada_2 = gr.Textbox(label="Generated frames folder", placeholder="The frames of AI generated video")
                             ruta_salida = gr.Textbox(label="Output folder", placeholder="Remember that each generation overwrites previous frames in the same folder.")
                         with gr.Accordion("Info", open=False):
-                            gr.Markdown("**Source denoise:** The dynamic map scan is sensitive to noise. If your source is not very clean, you may want to add a soft blur to remove impurities. This does not modify the original.")
-                            gr.Markdown("**DFI Tolerance:** Determines the movement tolerance of the scan. Low values will detect even small changes in static areas. You probably don't want this. High values will detect only large movements.")
-                            gr.Markdown("**Corruption Refresh:** To reduce the distortion generated by the process, you can recover original information every X number of frames. Lower number = faster refresh.")
-                            gr.Markdown("**Corruption Preserve:** Here you decide how much corruption keep in each corruption refresh. Low values will recover more of the original frame, with its changes and flickering, in exchange for reducing corruption. You must find the balance that works best for your goal.")
-                            gr.Markdown("**Smooth:** This smoothes the edges of the interpolated areas. Low values are currently recommended until the algorithm is updated.")
-                            gr.Markdown("**DFI Expand:** Fatten the edges of the DFI map. It can be used as a complement to DFI tolerance to control edge ghosting. 0=Off.")
+                            gr.Markdown("**Source denoise:** A noisy source can interfere with the accuracy of the scan. This will reduce noise, but also detail. However, this does not affect the original, and sometimes flatter images are not bad for the process, although you may need to balance by reducing the DFI tolerance.")
+                            gr.Markdown("**DFI Tolerance:** Determines the movement tolerance of the scan. Low tolerance will detect even small changes in static areas. High values will detect less movements. Ideally, it should detect the movements that are important to you, and skip the static and useless areas, reducing the flick in those. **This parameter commands the new dynamic algorithm.** ")
+                            gr.Markdown("**DFI Expand:** DFI expand fattens the edges of the areas detected by DFI. Note: DFI tolerance modifies the amount of movement detected. This only affects that result, be it big or small. Its a complementary parameter. 0=Off.")
                         with gr.Row():
-                            denoise_blur = gr.Slider(minimum=1, maximum=10, value=3, step=1, label="Source Denoise")
-                            dfi_strength = gr.Slider(minimum=1, maximum=10, value=5, step=0.5, label="DFI Tolerance")
-                        with gr.Row():
-                            frame_refresh_frequency = gr.Slider(minimum=1, maximum=30, value=5, step=1, label="Corruption Refresh (Lower = Faster)")
-                            refresh_strength = gr.Slider(minimum=0, maximum=100, value=50, step=5, label="Corruption Preserve")
-                        with gr.Row():
-                            smooth = gr.Slider(minimum=1, maximum=99, value=11, step=2, label="Smooth")
+                            denoise_blur = gr.Slider(minimum=0, maximum=10, value=0, step=1, label="Source Denoise")
+                            dfi_strength = gr.Slider(minimum=0.5, maximum=15, value=5, step=0.5, label="DFI Tolerance")
                             dfi_deghost = gr.Slider(minimum=0, maximum=10, value=0, step=1, label="DFI Expand")
+                        with gr.Accordion("Advanced", open=False):
+                            gr.Markdown("### The new dynamic algorithm will handle these parameters. Activate them only for manual control.")
+                            with gr.Accordion("Info", open=False):
+                                gr.Markdown("**Corruption Refresh:** To reduce the distortion generated by the process, you can recover original information every X number of frames. Lower number = faster refresh.")
+                                gr.Markdown("**Corruption Preserve:** Here you decide how much corruption keep in each corruption refresh. Low values will recover more of the original frame, with its changes and flickering, in exchange for reducing corruption. You must find the balance that works best for your goal.")
+                                gr.Markdown("**Smooth:** This smoothes the edges of the interpolated areas. Low values are currently recommended until the algorithm is updated.")
+                            with gr.Row():
+                                frame_refresh_frequency = gr.Slider(minimum=0, maximum=30, value=0, step=1, label="Corruption Refresh (Lower = Faster)")
+                                refresh_strength = gr.Slider(minimum=0, maximum=100, value=0, step=5, label="Corruption Preserve")
+                                smooth = gr.Slider(minimum=1, maximum=99, value=1, step=2, label="Smooth")
                         with gr.Row():
                             frames_limit = gr.Number(label="Frames to render. 0=ALL")
                             run_button = gr.Button(value="DFI", variant="primary")
@@ -766,7 +803,7 @@ def add_tab():
                     gr.Markdown("# What DFI does?")
                     with gr.Accordion("Info", open=False):
                         gr.Markdown("DFI processing analyzes the motion of the original video, and attempts to force that information into the generated video. Demo on https://github.com/AbyszOne/Abysz-LAB-Ext")
-                        gr.Markdown("For example, for a man smoking, leaning against a pole, it will detect that the pole is static, and will try to prevent it from changing as much as possible.")
+                        gr.Markdown("In short, this will reduce flicker in areas of the video that don't need to change, but SD does. For example, for a man smoking, leaning against a pole, it will detect that the pole is static, and will try to prevent it from changing as much as possible.")
                         gr.Markdown("This is an aggressive process that requires a lot of control for each context. Read the recommended strategies.")
                         gr.Markdown("Although Video to Video is the most efficient way, a DFI One Shot method is under experimental development as well.")
                     gr.Markdown("# Usage strategies")
@@ -775,7 +812,7 @@ def add_tab():
                         gr.Markdown("Instead, a much friendlier and faster way to use this tool is as an intermediate step. For this, you can allow a reasonable degree of corruption in exchange for more general stability. ")
                         gr.Markdown("You can then clean up the corruption and recover details with a second step in Stable Diffusion at low denoising (0.2-0.4), using the same parameters and seed.")
                         gr.Markdown("In this way, the final result will have the stability that we have gained, maintaining final detail. If you find a balanced workflow, you will get something at least much more coherent and stable than the raw AI render.")
-        inputs=[ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, frame_refresh_frequency, refresh_strength, smooth, dfi_deghost, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count]
+        inputs=[ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count]
         run_button.click(fn=main, inputs=inputs, outputs=output_placeholder)
         dfk_button.click(fn=deflickers, inputs=inputs, outputs=output_placeholder)
         fuse_button.click(fn=over_fuse, inputs=inputs, outputs=output_placeholder2)
