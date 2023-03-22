@@ -9,6 +9,7 @@ import sys
 import cv2
 import shutil
 import time
+import math
 
 from modules import shared
 from modules import scripts
