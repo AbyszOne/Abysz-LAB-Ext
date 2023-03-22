@@ -1004,7 +1004,7 @@ def add_tab():
                 with gr.Row():
                     with gr.Column():
                         with gr.Column():
-                            gr.Markdown("# Abysz LAB 0.1.4 Temporal coherence tools")
+                            gr.Markdown("# Abysz LAB 0.1.6 Temporal coherence tools")
                             gr.Markdown("## DFI Render")
                         with gr.Column():
                             ruta_entrada_1 = gr.Textbox(label="Original frames folder", placeholder="The RAW frames you have used as base for IA generation.")
