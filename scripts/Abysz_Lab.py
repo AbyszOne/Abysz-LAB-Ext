@@ -136,7 +136,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
             files2 = os.listdir(gen_dir)
             files2 = sorted(files2) # ordenar alfabéticamente la lista
             # Renombrar cada archivo
-            for i, file_name in enumerate(files):
+            for i, file_name in enumerate(files2):
                 old_path = os.path.join(gen_dir, file_name) # ruta actual del archivo
                 new_file_name = f"{i+1:03d}" # nuevo nombre de archivo con formato %03d
                 new_path = os.path.join(gen_dir, new_file_name + os.path.splitext(file_name)[1]) # nueva ruta del archivo
