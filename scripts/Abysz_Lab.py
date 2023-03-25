@@ -123,7 +123,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
             # Renombrar cada archivo
             for i, file_name in enumerate(files):
                 old_path = os.path.join(source_dir, file_name) # ruta actual del archivo
-                new_file_name = f"{i+1:03d}" # nuevo nombre de archivo con formato %03d
+                new_file_name = f"{i+1:04d}" # nuevo nombre de archivo con formato %04d
                 new_path = os.path.join(source_dir, new_file_name + os.path.splitext(file_name)[1]) # nueva ruta del archivo
                 try:
                     os.rename(old_path, new_path)
@@ -138,7 +138,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
             # Renombrar cada archivo
             for i, file_name in enumerate(files2):
                 old_path = os.path.join(gen_dir, file_name) # ruta actual del archivo
-                new_file_name = f"{i+1:03d}" # nuevo nombre de archivo con formato %03d
+                new_file_name = f"{i+1:04d}" # nuevo nombre de archivo con formato %04d
                 new_path = os.path.join(gen_dir, new_file_name + os.path.splitext(file_name)[1]) # nueva ruta del archivo
                 try:
                     os.rename(old_path, new_path)
@@ -206,7 +206,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
                 # Aplicar un umbral y guardar la imagen resultante en la carpeta MaskD. Menos es más.
                 umbral = umbral_size
                 umbralizado = cv2.threshold(diff, umbral, 255, cv2.THRESH_BINARY_INV)[1] # Invertir los colores
-                cv2.imwrite(os.path.join('./extensions/Abysz-LAB-Ext/scripts/Run/MaskD', f'{contador-1:03d}.png'), umbralizado)
+                cv2.imwrite(os.path.join('./extensions/Abysz-LAB-Ext/scripts/Run/MaskD', f'{contador-1:04d}.png'), umbralizado)
         
             anterior = cv2.imread(os.path.join(carpeta, filename), cv2.IMREAD_GRAYSCALE)
             contador += 1
@@ -729,7 +729,7 @@ def extract_video(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi
         frame_count += 1
 
         # Construir el nombre del archivo de salida
-        output_filename = os.path.join(output_dir, 'frame_{:03d}.jpeg'.format(frame_count))
+        output_filename = os.path.join(output_dir, 'frame_{:04d}.jpeg'.format(frame_count))
 
         # Guardar el frame como una imagen
         cv2.imwrite(output_filename, frame)
@@ -842,7 +842,7 @@ def test_dfi(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_stre
             # Renombrar cada archivo
             for i, file_name in enumerate(files):
                 old_path = os.path.join(source_dir, file_name) # ruta actual del archivo
-                new_file_name = f"{i+1:03d}" # nuevo nombre de archivo con formato %03d
+                new_file_name = f"{i+1:04d}" # nuevo nombre de archivo con formato %04d
                 new_path = os.path.join(source_dir, new_file_name + os.path.splitext(file_name)[1]) # nueva ruta del archivo
                 try:
                     os.rename(old_path, new_path)
@@ -857,7 +857,7 @@ def test_dfi(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_stre
             # Renombrar cada archivo
             for i, file_name in enumerate(files):
                 old_path = os.path.join(gen_dir, file_name) # ruta actual del archivo
-                new_file_name = f"{i+1:03d}" # nuevo nombre de archivo con formato %03d
+                new_file_name = f"{i+1:04d}" # nuevo nombre de archivo con formato %04d
                 new_path = os.path.join(gen_dir, new_file_name + os.path.splitext(file_name)[1]) # nueva ruta del archivo
                 try:
                     os.rename(old_path, new_path)
