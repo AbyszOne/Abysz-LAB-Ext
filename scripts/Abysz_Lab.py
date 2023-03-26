@@ -123,15 +123,41 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
             # Renombrar cada archivo
             for i, file_name in enumerate(files):
                 old_path = os.path.join(source_dir, file_name) # ruta actual del archivo
-                new_file_name = f"{i+1:04d}" # nuevo nombre de archivo con formato %04d
+                new_file_name = f"999{i+1:04d}" # nuevo nombre de archivo con formato %04d
                 new_path = os.path.join(source_dir, new_file_name + os.path.splitext(file_name)[1]) # nueva ruta del archivo
                 try:
                     os.rename(old_path, new_path)
                 except FileExistsError:
                     print(f"El archivo {new_file_name} ya existe. Se omite su renombre.")
                 
+            # Obtener una lista de los nombres de archivo en la carpeta "Source"
+            files = os.listdir(source_dir)
+            files = sorted(files) # ordenar alfabéticamente la lista
+            # Renombrar cada archivo
+            for i, file_name in enumerate(files):
+                old_path = os.path.join(source_dir, file_name) # ruta actual del archivo
+                new_file_name = f"{i+1:04d}" # nuevo nombre de archivo con formato %04d
+                new_path = os.path.join(source_dir, new_file_name + os.path.splitext(file_name)[1]) # nueva ruta del archivo
+                try:
+                    os.rename(old_path, new_path)
+                except FileExistsError:
+                    print(f"El archivo {new_file_name} ya existe. Se omite su renombre.")
+                    
             gen_dir = ruta_entrada_2 # ruta de la carpeta "Source"
             
+            # Obtener una lista de los nombres de archivo en la carpeta ruta_entrada_2
+            files2 = os.listdir(gen_dir)
+            files2 = sorted(files2) # ordenar alfabéticamente la lista
+            # Renombrar cada archivo
+            for i, file_name in enumerate(files2):
+                old_path = os.path.join(gen_dir, file_name) # ruta actual del archivo
+                new_file_name = f"999{i+1:04d}" # nuevo nombre de archivo con formato %04d
+                new_path = os.path.join(gen_dir, new_file_name + os.path.splitext(file_name)[1]) # nueva ruta del archivo
+                try:
+                    os.rename(old_path, new_path)
+                except FileExistsError:
+                    print(f"El archivo {new_file_name} ya existe. Se omite su renombre.")
+                    
             # Obtener una lista de los nombres de archivo en la carpeta ruta_entrada_2
             files2 = os.listdir(gen_dir)
             files2 = sorted(files2) # ordenar alfabéticamente la lista
