@@ -56,15 +56,20 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
         def copy_images(ruta_entrada_1, ruta_entrada_2, frames_limit=0):
             # Copiar todas las imágenes de la carpeta ruta_entrada_1 a la carpeta Source
             count = 0
-            for file in os.listdir(ruta_entrada_1):
+            
+            archivos = os.listdir(ruta_entrada_1)
+            archivos_ordenados = sorted(archivos)
+            
+            for i, file in enumerate(archivos_ordenados):
                 if file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png"):
                     img = Image.open(os.path.join(ruta_entrada_1, file))
                     rgb_img = img.convert('RGB')
-                    rgb_img.save(os.path.join("./extensions/Abysz-LAB-Ext/scripts/Run/Source", file), "jpeg", quality=100)
+                    rgb_img.save(os.path.join("./extensions/Abysz-LAB-Ext/scripts/Run/Source", "{:04d}.jpeg".format(i+1)), "jpeg", quality=100)
                     count += 1
                     if frames_limit > 0 and count >= frames_limit:
                         break
-        
+                                     
+                        
         # Llamar a la función copy_images para copiar las imágenes
         copy_images(ruta_entrada_1,ruta_salida, frames_limit)
         
@@ -88,7 +93,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
             gen_aspect_ratio = gen_width / gen_height
             
             # Recorrer todas las imágenes en la carpeta FULL
-            for image_name in os.listdir(full_folder):
+            for image_name in sorted(os.listdir(full_folder)): 
                 image_path = os.path.join(full_folder, image_name)
                 image = cv2.imread(image_path)
                 height, width = image.shape[:2]
@@ -115,34 +120,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
         sresize(ruta_entrada_2)
             
         def s_g_rename(ruta_entrada_2):
-            source_dir = "./extensions/Abysz-LAB-Ext/scripts/Run/Source" # ruta de la carpeta "Source"
-            
-            # Obtener una lista de los nombres de archivo en la carpeta "Source"
-            files = os.listdir(source_dir)
-            files = sorted(files) # ordenar alfabéticamente la lista
-            # Renombrar cada archivo
-            for i, file_name in enumerate(files):
-                old_path = os.path.join(source_dir, file_name) # ruta actual del archivo
-                new_file_name = f"999{i+1:04d}" # nuevo nombre de archivo con formato %04d
-                new_path = os.path.join(source_dir, new_file_name + os.path.splitext(file_name)[1]) # nueva ruta del archivo
-                try:
-                    os.rename(old_path, new_path)
-                except FileExistsError:
-                    print(f"El archivo {new_file_name} ya existe. Se omite su renombre.")
-                
-            # Obtener una lista de los nombres de archivo en la carpeta "Source"
-            files = os.listdir(source_dir)
-            files = sorted(files) # ordenar alfabéticamente la lista
-            # Renombrar cada archivo
-            for i, file_name in enumerate(files):
-                old_path = os.path.join(source_dir, file_name) # ruta actual del archivo
-                new_file_name = f"{i+1:04d}" # nuevo nombre de archivo con formato %04d
-                new_path = os.path.join(source_dir, new_file_name + os.path.splitext(file_name)[1]) # nueva ruta del archivo
-                try:
-                    os.rename(old_path, new_path)
-                except FileExistsError:
-                    print(f"El archivo {new_file_name} ya existe. Se omite su renombre.")
-                    
+                                
             gen_dir = ruta_entrada_2 # ruta de la carpeta "Source"
             
             # Obtener una lista de los nombres de archivo en la carpeta ruta_entrada_2
@@ -151,7 +129,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
             # Renombrar cada archivo
             for i, file_name in enumerate(files2):
                 old_path = os.path.join(gen_dir, file_name) # ruta actual del archivo
-                new_file_name = f"999{i+1:04d}" # nuevo nombre de archivo con formato %04d
+                new_file_name = f"{i+1:04d}rename" # nuevo nombre de archivo con formato %04d
                 new_path = os.path.join(gen_dir, new_file_name + os.path.splitext(file_name)[1]) # nueva ruta del archivo
                 try:
                     os.rename(old_path, new_path)
