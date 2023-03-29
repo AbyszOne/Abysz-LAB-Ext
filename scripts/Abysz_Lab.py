@@ -26,7 +26,7 @@ class Script(scripts.Script):
     def ui(self, is_img2img):
         return []
         
-def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
             
         maskD = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'MaskD')
         maskS = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'MaskS')
@@ -48,11 +48,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
         os.makedirs(maskD, exist_ok=True)
         #os.makedirs(gen, exist_ok=True)
         
-        # Copy the images from Ruta1 to Source folder in JPEG quality 100
-        #for file in os.listdir(ruta_entrada_1):
-        #    if file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png"):
-        #        img = Image.open(os.path.join(ruta_entrada_1, file))
-        #        img.save(os.path.join("Source", file), "jpeg", quality=100)
+        
         def copy_images(ruta_entrada_1, ruta_entrada_2, frames_limit=0):
             # Copiar todas las imágenes de la carpeta ruta_entrada_1 a la carpeta Source
             count = 0
@@ -73,12 +69,6 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
         # Llamar a la función copy_images para copiar las imágenes
         copy_images(ruta_entrada_1,ruta_salida, frames_limit)
         
-        #for file in os.listdir(ruta_entrada_2):
-        #    if file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png"):
-        #        img = Image.open(os.path.join(ruta_entrada_2, file))
-        #        img.save(os.path.join(ruta_entrada_2, file))
-        #        
-        # Carpeta donde se encuentran las imágenes de Gen
         def sresize(ruta_entrada_2):
             gen_folder = ruta_entrada_2
             
@@ -597,7 +587,7 @@ def overlay_run(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength):
             ruta_salida = os.path.join(ruta_salida_1, nombre_archivo)
             cv2.imwrite(ruta_salida, img_contrast)
 
-def over_fuse(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+def over_fuse(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
     # Obtener una lista de todos los archivos en la carpeta "Gen"
     gen_files = os.listdir(ruta_entrada_4)
     
@@ -677,12 +667,12 @@ def norm(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_streng
         destino = os.path.join(ruta_salida_1, archivo)
         shutil.move(origen, destino)
         
-def deflickers(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+def deflickers(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
     dyndef(ruta_entrada_3, ruta_salida_1, ddf_strength)
     overlay_run(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength)
     norm(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength)
     
-def extract_video(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+def extract_video(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
 
     # Ruta del archivo de video
     filename = ruta_entrada_6
@@ -747,14 +737,14 @@ def extract_video(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi
     # Mostrar información sobre el proceso finalizado
     print("Extracted {} frames.".format(frame_count))
 
-def test_dfi(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+def test_dfi(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
         
         
         maskD = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'MaskDT')
         #maskS = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'MaskST')
         #output = os.path.join(os.getcwd(), 'extensions', 'Abysz-lab', 'scripts', 'Run', 'Output')
         source = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'SourceT')
-        gen = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'GenT')
+        #gen = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'GenT')
         
         # verificar si las carpetas existen y eliminarlas si es el caso
         if os.path.exists(source): # verificar si existe la carpeta source
@@ -763,8 +753,8 @@ def test_dfi(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_stre
         #    shutil.rmtree(maskS) # eliminar la carpeta maskS y su contenido
         if os.path.exists(maskD): # verificar si existe la carpeta maskS
             shutil.rmtree(maskD) # eliminar la carpeta maskS y su contenido
-        if os.path.exists(gen): # verificar si existe la carpeta maskS
-            shutil.rmtree(gen) # eliminar la carpeta maskS y su contenido
+        #if os.path.exists(gen): # verificar si existe la carpeta maskS
+        #    shutil.rmtree(gen) # eliminar la carpeta maskS y su contenido
         #if os.path.exists(output): # verificar si existe la carpeta maskS
         #    shutil.rmtree(output) # eliminar la carpeta maskS y su contenido
             
@@ -773,26 +763,25 @@ def test_dfi(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_stre
         #os.makedirs(maskS, exist_ok=True)
         #os.makedirs(output, exist_ok=True)
         os.makedirs(maskD, exist_ok=True)
-        os.makedirs(gen, exist_ok=True)
+        #os.makedirs(gen, exist_ok=True)
         
         
         def copy_images(ruta_entrada_1, ruta_entrada_2):
+            if test_mode == 0:
+                # Usar el primer formato
+                indices = [10, 11, 20, 21, 30, 31] # Los índices de las imágenes que quieres copiar
+            else:
+                test_frames = test_mode
+                # Usar el segundo formato
+                indices = list(range(test_frames)) # Los primeros 30 índices
             # Copiar todas las imágenes de la carpeta ruta_entrada_1 a la carpeta Source
-            indices = [10, 11, 20, 21, 30, 31] # Los índices de las imágenes que quieres copiar
             for i in indices:
                 file = os.listdir(ruta_entrada_1)[i] # Obtener el nombre del archivo en el índice i
                 if file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png"): # Verificar que sea una imagen
                     img = Image.open(os.path.join(ruta_entrada_1, file)) # Abrir la imagen
                     rgb_img = img.convert('RGB') # Convertir a RGB
-                    rgb_img.save(os.path.join("./extensions/Abysz-LAB-Ext/scripts/Run/SourceT", file), "jpeg", quality=100) # Guardar la imagen en la carpeta destino
-            for i in indices:
-                file = os.listdir(ruta_entrada_2)[i] # Obtener el nombre del archivo en el índice i
-                if file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png"): # Verificar que sea una imagen
-                    img = Image.open(os.path.join(ruta_entrada_2, file)) # Abrir la imagen
-                    rgb_img = img.convert('RGB') # Convertir a RGB
-                    rgb_img.save(os.path.join("./extensions/Abysz-LAB-Ext/scripts/Run/GenT", file), "jpeg", quality=100) # Guardar la imagen en la carpeta destino
-                    
-        
+                    rgb_img.save(os.path.join("./extensions/Abysz-LAB-Ext/scripts/Run/SourceT", "{:04d}.jpeg".format(i+1)), "jpeg", quality=100) # Guardar la imagen en la carpeta destino
+                  
         # Llamar a la función copy_images para copiar las imágenes
         copy_images(ruta_entrada_1, ruta_entrada_2)
         
@@ -837,48 +826,6 @@ def test_dfi(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_stre
         
         sresize(ruta_entrada_2)
             
-        def s_g_rename(ruta_entrada_2):
-            source_dir = "./extensions/Abysz-LAB-Ext/scripts/Run/SourceT" # ruta de la carpeta "Source"
-            
-            # Obtener una lista de los nombres de archivo en la carpeta "Source"
-            files = os.listdir(source_dir)
-            
-            # Renombrar cada archivo
-            for i, file_name in enumerate(files):
-                old_path = os.path.join(source_dir, file_name) # ruta actual del archivo
-                new_file_name = f"{i+1:04d}" # nuevo nombre de archivo con formato %04d
-                new_path = os.path.join(source_dir, new_file_name + os.path.splitext(file_name)[1]) # nueva ruta del archivo
-                try:
-                    os.rename(old_path, new_path)
-                except FileExistsError:
-                    print(f"El archivo {new_file_name} ya existe. Se omite su renombre.")
-                
-            gen_dir = "./extensions/Abysz-LAB-Ext/scripts/Run/GenT" # ruta de la carpeta "Source"
-            
-            # Obtener una lista de los nombres de archivo en la carpeta ruta_entrada_2
-            files = os.listdir(gen_dir)
-            
-            # Renombrar cada archivo
-            for i, file_name in enumerate(files):
-                old_path = os.path.join(gen_dir, file_name) # ruta actual del archivo
-                new_file_name = f"{i+1:04d}" # nuevo nombre de archivo con formato %04d
-                new_path = os.path.join(gen_dir, new_file_name + os.path.splitext(file_name)[1]) # nueva ruta del archivo
-                try:
-                    os.rename(old_path, new_path)
-                except FileExistsError:
-                    print(f"El archivo {new_file_name} ya existe. Se omite su renombre.")
-        
-        s_g_rename(ruta_entrada_2)
-        
-        # Obtener el primer archivo de la carpeta ruta_entrada_2
-        #gen_files = os.listdir(ruta_entrada_2)
-        #if gen_files:
-        #    first_gen_file = gen_files[0]
-        #
-        #    # Copiar el archivo a la carpeta "Output" y reemplazar si ya existe
-        #    output_file = os.path.join(output, first_gen_file)
-        #    shutil.copyfile(os.path.join(ruta_entrada_2, first_gen_file), output_file)
-        #subprocess call
         def denoise(denoise_blur):
             if denoise_blur < 1:
                 return
@@ -920,23 +867,43 @@ def test_dfi(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_stre
         umbral_size = dfi_strength
         # Iterar a través de los archivos de imagen en la carpeta Source
         for filename in sorted(os.listdir(carpeta)):
-            # Cargar la imagen actual en escala de grises
-            actual = cv2.imread(os.path.join(carpeta, filename), cv2.IMREAD_GRAYSCALE)
-            
-            # Si el número de imagen es par, procesar la imagen actual y la anterior
-            if numero % 2 == 0:
-                diff = cv2.absdiff(anterior, actual)
-        
-                # Aplicar un umbral y guardar la imagen resultante en la carpeta MaskD con el mismo nombre que el original. Menos es más.
-                umbral = umbral_size
-                umbralizado = cv2.threshold(diff, umbral, 255, cv2.THRESH_BINARY_INV)[1] # Invertir los colores
-                cv2.imwrite(os.path.join('./extensions/Abysz-LAB-Ext/scripts/Run/MaskDT', filename), umbralizado)
+            if test_mode == 0:
+                # Cargar la imagen actual en escala de grises
+                actual = cv2.imread(os.path.join(carpeta, filename), cv2.IMREAD_GRAYSCALE)
                 
-            # Guardar la imagen actual como anterior para el siguiente ciclo
-            anterior = actual
+                # Si el número de imagen es par, procesar la imagen actual y la anterior
+                if numero % 2 == 0:
+                    diff = cv2.absdiff(anterior, actual)
             
-            # Incrementar el número de imagen para alternar entre pares e impares
-            numero += 1
+                    # Aplicar un umbral y guardar la imagen resultante en la carpeta MaskD con el mismo nombre que el original. Menos es más.
+                    umbral = umbral_size
+                    umbralizado = cv2.threshold(diff, umbral, 255, cv2.THRESH_BINARY_INV)[1] # Invertir los colores
+                    cv2.imwrite(os.path.join('./extensions/Abysz-LAB-Ext/scripts/Run/MaskDT', filename), umbralizado)
+                    
+                # Guardar la imagen actual como anterior para el siguiente ciclo
+                anterior = actual
+                
+                # Incrementar el número de imagen para alternar entre pares e impares
+                numero += 1
+        
+            else:
+                       
+                # Iterar a través de los archivos de imagen en la carpeta Source
+                for filename in sorted(os.listdir(carpeta)):
+                    # Cargar la imagen actual y la siguiente en escala de grises
+                    
+                    if numero > 1:
+                        siguiente = cv2.imread(os.path.join(carpeta, filename), cv2.IMREAD_GRAYSCALE)
+                        diff = cv2.absdiff(anterior, siguiente)
+                
+                        # Aplicar un umbral y guardar la imagen resultante en la carpeta MaskD. Menos es más.
+                        umbral = umbral_size
+                        umbralizado = cv2.threshold(diff, umbral, 255, cv2.THRESH_BINARY_INV)[1] # Invertir los colores
+                        cv2.imwrite(os.path.join('./extensions/Abysz-LAB-Ext/scripts/Run/MaskDT', filename), umbralizado)
+                
+                    anterior = cv2.imread(os.path.join(carpeta, filename), cv2.IMREAD_GRAYSCALE)
+                    numero += 1    
+        
               
         
         # Obtener la lista de los nombres de los archivos en la carpeta MaskD
@@ -983,24 +950,136 @@ def test_dfi(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_stre
                     # Guardar la imagen con el mismo nombre
                     cv2.imwrite(os.path.join(carpeta, imagen), img)
                     
-                
-        nombres = os.listdir("./extensions/Abysz-LAB-Ext/scripts/Run/MaskDT") # obtener los nombres de los archivos en la carpeta MaskDT
-        ancho = 0 # variable para guardar el ancho acumulado de las ventanas
-        for i, nombre in enumerate(nombres): # recorrer cada nombre de archivo
-            imagen = cv2.imread("./extensions/Abysz-LAB-Ext/scripts/Run/MaskDT/" + nombre) # leer la imagen correspondiente
-            h, w, c = imagen.shape # obtener el alto, ancho y canales de la imagen
-            aspect_ratio = w / h # calcular la relación de aspecto
-            cv2.namedWindow(nombre, cv2.WINDOW_NORMAL) # crear una ventana con el nombre del archivo
-            ancho_ventana = 500 # definir un ancho fijo para las ventanas
-            alto_ventana = int(ancho_ventana / aspect_ratio) # calcular el alto proporcional al ancho y a la relación de aspecto
-            cv2.resizeWindow(nombre, ancho_ventana, alto_ventana) # cambiar el tamaño de la ventana según las dimensiones calculadas 
-            cv2.moveWindow(nombre, ancho, 0) # mover la ventana a una posición horizontal según el ancho acumulado 
-            cv2.imshow(nombre, imagen) # mostrar la imagen en la ventana
-            cv2.setWindowProperty(nombre,cv2.WND_PROP_TOPMOST,1.0) # poner la ventana en primer plano con un valor double 
-            ancho += ancho_ventana + 10 # aumentar el ancho acumulado en 410 píxeles para la siguiente ventana 
-        cv2.waitKey(4000) # esperar a que se presione una tecla para cerrar todas las ventanas 
-        cv2.destroyAllWindows() # cerrar todas las ventanas abiertas por OpenCV 
+        if test_mode == 0:         
+            nombres = os.listdir("./extensions/Abysz-LAB-Ext/scripts/Run/MaskDT") # obtener los nombres de los archivos en la carpeta MaskDT
+            ancho = 0 # variable para guardar el ancho acumulado de las ventanas
+            for i, nombre in enumerate(nombres): # recorrer cada nombre de archivo
+                imagen = cv2.imread("./extensions/Abysz-LAB-Ext/scripts/Run/MaskDT/" + nombre) # leer la imagen correspondiente
+                h, w, c = imagen.shape # obtener el alto, ancho y canales de la imagen
+                aspect_ratio = w / h # calcular la relación de aspecto
+                cv2.namedWindow(nombre, cv2.WINDOW_NORMAL) # crear una ventana con el nombre del archivo
+                ancho_ventana = 630 # definir un ancho fijo para las ventanas
+                alto_ventana = int(ancho_ventana / aspect_ratio) # calcular el alto proporcional al ancho y a la relación de aspecto
+                cv2.resizeWindow(nombre, ancho_ventana, alto_ventana) # cambiar el tamaño de la ventana según las dimensiones calculadas 
+                cv2.moveWindow(nombre, ancho, 0) # mover la ventana a una posición horizontal según el ancho acumulado 
+                cv2.imshow(nombre, imagen) # mostrar la imagen en la ventana
+                cv2.setWindowProperty(nombre,cv2.WND_PROP_TOPMOST,1.0) # poner la ventana en primer plano con un valor double 
+                ancho += ancho_ventana + 10 # aumentar el ancho acumulado en 410 píxeles para la siguiente ventana 
+            cv2.waitKey(4000) # esperar a que se presione una tecla para cerrar todas las ventanas 
+            cv2.destroyAllWindows() # cerrar todas las ventanas abiertas por OpenCV 
+        
+        
+        else:
+            
+            # Directorio de entrada de imágenes
+            ruta_entrada = "./extensions/Abysz-LAB-Ext/scripts/Run/MaskDT"
+            
+            # Obtener el tamaño de la primera imagen en el directorio de entrada
+            img_path = os.path.join(ruta_entrada, os.listdir(ruta_entrada)[0])
+            img = cv2.imread(img_path)
+            img_size = (img.shape[1], img.shape[0])
+            
+            # Fps del video
+            fps = 10
+            
+            # Crear objeto VideoWriter
+            fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+            video_salida = cv2.VideoWriter('output.mp4', fourcc, fps, img_size)
+            
+            # Crear ventana con nombre "video"
+            cv2.namedWindow("video")
+            
+            # Establecer la ventana en primer plano
+            cv2.setWindowProperty("video", cv2.WND_PROP_TOPMOST,1.0)
 
+            # Crear ventana de visualización
+            # Leer imágenes en el directorio y agregarlas al video de salida
+            for file in sorted(os.listdir(ruta_entrada)):
+                if file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png"): # Verificar que sea una imagen
+                    img = cv2.imread(os.path.join(ruta_entrada, file)) # Leer la imagen
+                    #img_resized = cv2.resize(img, img_size) # Redimensionar la imagen
+                    video_salida.write(img) # Agregar la imagen al video
+                    
+            # Liberar el objeto VideoWriter
+            video_salida.release()
+            
+            # Crear objeto VideoCapture para leer el archivo de video recién creado
+            video_capture = cv2.VideoCapture('output.mp4')
+            
+            # Crear ventana con nombre "video"
+            cv2.namedWindow("video")
+            
+            # Establecer la ventana en primer plano
+            cv2.setWindowProperty("video", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
+            
+            # Mostrar el video en una ventana
+            while True:
+                ret, img = video_capture.read()
+                if ret:
+                    cv2.imshow('video', img)
+                    cv2.waitKey(int(1000/fps))
+                else:
+                    break
+            
+            # Liberar el objeto VideoCapture y cerrar la ventana de visualización
+            video_capture.release()
+            cv2.destroyAllWindows()
+
+def dfi_video(ruta_salida):
+    # Directorio de entrada de imágenes
+    ruta_entrada = ruta_salida
+    
+    # Obtener el tamaño de la primera imagen en el directorio de entrada
+    img_path = os.path.join(ruta_entrada, os.listdir(ruta_entrada)[0])
+    img = cv2.imread(img_path)
+    img_size = (img.shape[1], img.shape[0])
+    
+    # Fps del video
+    fps = 15
+    
+    # Crear objeto VideoWriter
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    video_salida = cv2.VideoWriter('output.mp4', fourcc, fps, img_size)
+    
+    # Crear ventana con nombre "video"
+    cv2.namedWindow("video")
+    
+    # Establecer la ventana en primer plano
+    cv2.setWindowProperty("video", cv2.WND_PROP_TOPMOST,1.0)
+
+    # Crear ventana de visualización
+    # Leer imágenes en el directorio y agregarlas al video de salida
+    for file in sorted(os.listdir(ruta_entrada)):
+        if file.endswith(".jpg") or file.endswith(".jpeg") or file.endswith(".png"): # Verificar que sea una imagen
+            img = cv2.imread(os.path.join(ruta_entrada, file)) # Leer la imagen
+            #img_resized = cv2.resize(img, img_size) # Redimensionar la imagen
+            video_salida.write(img) # Agregar la imagen al video
+            
+    # Liberar el objeto VideoWriter
+    video_salida.release()
+    
+    # Crear objeto VideoCapture para leer el archivo de video recién creado
+    video_capture = cv2.VideoCapture('output.mp4')
+    
+    # Crear ventana con nombre "video"
+    cv2.namedWindow("video")
+    
+    # Establecer la ventana en primer plano
+    cv2.setWindowProperty("video", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
+    
+    # Mostrar el video en una ventana
+    while True:
+        ret, img = video_capture.read()
+        if ret:
+            cv2.imshow('video', img)
+            cv2.waitKey(int(1000/fps))
+        else:
+            break
+    
+    # Liberar el objeto VideoCapture y cerrar la ventana de visualización
+    video_capture.release()
+    cv2.destroyAllWindows()
+    
     
 def add_tab():
     print('LAB')
@@ -1010,7 +1089,7 @@ def add_tab():
                 with gr.Row():
                     with gr.Column():
                         with gr.Column():
-                            gr.Markdown("# Abysz LAB 0.1.7 Temporal coherence tools")
+                            gr.Markdown("# Abysz LAB 0.1.9 Temporal coherence tools")
                             gr.Markdown("## DFI Render")
                         with gr.Column():
                             ruta_entrada_1 = gr.Textbox(label="Original frames folder", placeholder="The RAW frames you have used as base for IA generation.")
@@ -1022,13 +1101,15 @@ def add_tab():
                             gr.Markdown("**DFI Tolerance:** Determines the movement tolerance of the scan. Low tolerance will detect even small changes in static areas. High values will detect less movements. Ideally, it should detect the movements that are important to you, and skip the static and useless areas, reducing the flick in those. **This parameter commands the new dynamic algorithm.** ")
                             gr.Markdown("**DFI Expand:** DFI expand fattens the edges of the areas detected by DFI. Note: DFI tolerance modifies the amount of movement detected. This only affects that result, be it big or small. Its a complementary parameter. 0=Off.")
                         with gr.Row():
-                            denoise_blur = gr.Slider(minimum=0, maximum=50, value=0, step=1, label="Source Denoise")
-                            dfi_strength = gr.Slider(minimum=0.5, maximum=15, value=5, step=0.5, label="DFI Tolerance")
-                            dfi_deghost = gr.Slider(minimum=0, maximum=10, value=0, step=1, label="DFI Expand")
+                            denoise_blur = gr.Slider(minimum=0, maximum=30, value=0, step=1, label="Source Denoise")
+                            dfi_strength = gr.Slider(minimum=0.5, maximum=20, value=5, step=0.5, label="DFI Tolerance")
+                            dfi_deghost = gr.Slider(minimum=0, maximum=50, value=0, step=1, label="DFI Expand")
                         with gr.Accordion("Info", open=False):
-                            gr.Markdown("Here you can check 3 examples of the motion map for those parameters. It is useful, for example, to adjust denoise if you see that it detects unnecessary graininess. Keep in mind that what you see represents movement between two frames.")
-                            gr.Markdown("The black is basically what it won't process (it will let it through to preserve the movement), and the white what it will try to keep stable in that frame interpolation. Try freely. Here you can also test how the manual blur works (advanced section).")
-                        dfi_test = gr.Button(value="Preview DFI Map")
+                            gr.Markdown("Here you can check examples of the motion map for those parameters. It is useful, for example, to adjust denoise if you see that it detects unnecessary graininess. Keep in mind that what you see represents movement between two frames.")
+                            gr.Markdown("The black is basically what it won't process (it will let it through to preserve the movement), and the white what it will try to keep stable in that frame interpolation. Try freely. Here you can also test how the manual smooth works (advanced section).")
+                        with gr.Row():
+                            dfi_test = gr.Button(value="Preview DFI Map")
+                            test_mode = gr.Slider(minimum=0, maximum=100, value=0, step=1, label="Preview amount. 0 = Quick shoot")
                         with gr.Accordion("Advanced", open=False):
                             with gr.Accordion("Info", open=False):
                                 gr.Markdown("**Inter Denoise:** Reduces render pixelation generated by corruption. However, be careful. It's resource hungry, and might remove excess detail. Not recommended to change size or FPD, but to use Stable Diffusion to remove the pixelation later.")
@@ -1050,6 +1131,7 @@ def add_tab():
                             frames_limit = gr.Number(label="Frames to render. 0=ALL")
                             run_button = gr.Button(value="Run DFI", variant="primary")
                             output_placeholder = gr.Textbox(label="Status", placeholder="STAND BY...")
+                        video_dfi = gr.Button(value="Show output folder video")
                     with gr.Column():
                         with gr.Column():
                             gr.Markdown("# |")
@@ -1059,7 +1141,7 @@ def add_tab():
                                 ruta_salida_1 = gr.Textbox(label="Output folder", placeholder="Processed frames")
                                 with gr.Accordion("Info", open=False):
                                     gr.Markdown("I made this series of deflickers based on the standard that Vegas Pro includes. You can use them together or separately. Be careful when mixing them.")
-                                    gr.Markdown("**Blend:** Blends a percentage of the previous frame with the next. This can soften transitions and highlights. High values will add too much information.")
+                                    gr.Markdown("**Blend:** Blends a percentage between frames. This can soften transitions and highlights. 50 is half of each frame. 80 or 20 are recommended values.")
                                     gr.Markdown("**Overlay:** Use the overlay image blending mode. Note that it works particularly good at mid-high values, wich will modify the overall contrast. You will have to decide what works for you.")
                                     gr.Markdown("**Normalize:** Calculates the average between frames to merge them. It may be more practical if you don't have a specific Blend deflicker value in mind.")
                                 ddf_strength = gr.Slider(minimum=0, maximum=1, value=0, step=0.01, label="BLEND (0=Off)")
@@ -1101,9 +1183,10 @@ def add_tab():
                         gr.Markdown("Instead, a much friendlier and faster way to use this tool is as an intermediate step. For this, you can allow a reasonable degree of corruption in exchange for more general stability. ")
                         gr.Markdown("You can then clean up the corruption and recover details with a second step in Stable Diffusion at low denoising (0.2-0.4), using the same parameters and seed.")
                         gr.Markdown("In this way, the final result will have the stability that we have gained, maintaining final detail. If you find a balanced workflow, you will get something at least much more coherent and stable than the raw AI render.")
-        inputs=[ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count]
+        inputs=[ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count]
         dfi_test.click(fn=test_dfi, inputs=inputs, outputs=output_placeholder)
         run_button.click(fn=main, inputs=inputs, outputs=output_placeholder)
+        video_dfi.click(fn=dfi_video, inputs=ruta_salida, outputs=output_placeholder)
         dfk_button.click(fn=deflickers, inputs=inputs, outputs=output_placeholder)
         fuse_button.click(fn=over_fuse, inputs=inputs, outputs=output_placeholder2)
         vidextract_button.click(fn=extract_video, inputs=inputs, outputs=output_placeholder2)
