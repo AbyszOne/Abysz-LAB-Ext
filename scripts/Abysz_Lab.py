@@ -379,7 +379,7 @@ def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength
                 # cargar imagen con opencv
                 imagen = cv2.imread(ultimo_archivo)
                 # aplicar filtro bilateral
-                imagen_filtrada = cv2.bilateralFilter(imagen, 9, 9, 9)
+                imagen_filtrada = cv2.bilateralFilter(imagen, kernel1, kernel2, kernel2)
                 # sobreescribir el original
                 cv2.imwrite(ultimo_archivo, imagen_filtrada)
             
