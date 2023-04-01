@@ -26,7 +26,7 @@ class Script(scripts.Script):
     def ui(self, is_img2img):
         return []
         
-def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+def main(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit):
             
         maskD = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'MaskD')
         maskS = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'MaskS')
@@ -587,7 +587,7 @@ def overlay_run(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength):
             ruta_salida = os.path.join(ruta_salida_1, nombre_archivo)
             cv2.imwrite(ruta_salida, img_contrast)
 
-def over_fuse(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+def over_fuse(ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength):
     # Obtener una lista de todos los archivos en la carpeta "Gen"
     gen_files = os.listdir(ruta_entrada_4)
     
@@ -667,12 +667,12 @@ def norm(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_streng
         destino = os.path.join(ruta_salida_1, archivo)
         shutil.move(origen, destino)
         
-def deflickers(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+def deflickers(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength):
     dyndef(ruta_entrada_3, ruta_salida_1, ddf_strength)
     overlay_run(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength)
     norm(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength)
     
-def extract_video(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+def extract_video(ruta_entrada_6, ruta_salida_3, fps_count):
 
     # Ruta del archivo de video
     filename = ruta_entrada_6
@@ -737,7 +737,7 @@ def extract_video(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi
     # Mostrar información sobre el proceso finalizado
     print("Extracted {} frames.".format(frame_count))
 
-def test_dfi(ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count):
+def test_dfi(ruta_entrada_1, ruta_entrada_2, denoise_blur, dfi_strength, dfi_deghost, smooth):
         
         
         maskD = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'MaskDT')
@@ -1183,13 +1183,19 @@ def add_tab():
                         gr.Markdown("Instead, a much friendlier and faster way to use this tool is as an intermediate step. For this, you can allow a reasonable degree of corruption in exchange for more general stability. ")
                         gr.Markdown("You can then clean up the corruption and recover details with a second step in Stable Diffusion at low denoising (0.2-0.4), using the same parameters and seed.")
                         gr.Markdown("In this way, the final result will have the stability that we have gained, maintaining final detail. If you find a balanced workflow, you will get something at least much more coherent and stable than the raw AI render.")
-        inputs=[ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit, ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength, ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength, ruta_entrada_6, ruta_salida_3, fps_count]
-        dfi_test.click(fn=test_dfi, inputs=inputs, outputs=output_placeholder)
-        run_button.click(fn=main, inputs=inputs, outputs=output_placeholder)
+        
+        dt_inputs=[ruta_entrada_1, ruta_entrada_2, denoise_blur, dfi_strength, dfi_deghost, smooth]
+        run_inputs=[ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit]
+        dfk_inputs=[ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength]
+        fuse_inputs=[ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength]
+        ve_inputs=[ruta_entrada_6, ruta_salida_3, fps_count]
+        
+        dfi_test.click(fn=test_dfi, inputs=dt_inputs, outputs=output_placeholder)
+        run_button.click(fn=main, inputs=run_inputs, outputs=output_placeholder)
         video_dfi.click(fn=dfi_video, inputs=ruta_salida, outputs=output_placeholder)
-        dfk_button.click(fn=deflickers, inputs=inputs, outputs=output_placeholder)
-        fuse_button.click(fn=over_fuse, inputs=inputs, outputs=output_placeholder2)
-        vidextract_button.click(fn=extract_video, inputs=inputs, outputs=output_placeholder2)
+        dfk_button.click(fn=deflickers, inputs=dfk_inputs, outputs=output_placeholder)
+        fuse_button.click(fn=over_fuse, inputs=fuse_inputs, outputs=output_placeholder2)
+        vidextract_button.click(fn=extract_video, inputs=ve_inputs, outputs=output_placeholder2)
     return [(demo, "Abysz LAB", "demo")]
         
 script_callbacks.on_ui_tabs(add_tab)
