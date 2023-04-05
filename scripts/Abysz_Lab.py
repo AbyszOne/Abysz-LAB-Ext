@@ -737,7 +737,7 @@ def extract_video(ruta_entrada_6, ruta_salida_3, fps_count):
     # Mostrar información sobre el proceso finalizado
     print("Extracted {} frames.".format(frame_count))
 
-def test_dfi(ruta_entrada_1, ruta_entrada_2, denoise_blur, dfi_strength, dfi_deghost, smooth):
+def test_dfi(ruta_entrada_1, ruta_entrada_2, denoise_blur, dfi_strength, dfi_deghost, test_mode, smooth):
         
         
         maskD = os.path.join(os.getcwd(), 'extensions', 'Abysz-LAB-Ext', 'scripts', 'Run', 'MaskDT')
@@ -1184,7 +1184,7 @@ def add_tab():
                         gr.Markdown("You can then clean up the corruption and recover details with a second step in Stable Diffusion at low denoising (0.2-0.4), using the same parameters and seed.")
                         gr.Markdown("In this way, the final result will have the stability that we have gained, maintaining final detail. If you find a balanced workflow, you will get something at least much more coherent and stable than the raw AI render.")
         
-        dt_inputs=[ruta_entrada_1, ruta_entrada_2, denoise_blur, dfi_strength, dfi_deghost, smooth]
+        dt_inputs=[ruta_entrada_1, ruta_entrada_2, denoise_blur, dfi_strength, dfi_deghost, test_mode, smooth]
         run_inputs=[ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit]
         dfk_inputs=[ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength, norm_strength]
         fuse_inputs=[ruta_entrada_4, ruta_entrada_5, ruta_salida_2, fuse_strength]
