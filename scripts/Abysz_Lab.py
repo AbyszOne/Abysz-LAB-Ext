@@ -541,7 +541,7 @@ def overlay_run(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength):
             os.makedirs(ruta_salida_1)
             
     gen_path = ruta_entrada_3
-    images = os.listdir(gen_path)
+    images = sorted(os.listdir(gen_path))
     image1_path = os.path.join(gen_path, images[0])
     image2_path = os.path.join(gen_path, images[1])
     
@@ -553,7 +553,7 @@ def overlay_run(ruta_entrada_3, ruta_salida_1, ddf_strength, over_strength):
     
     
     # Obtener una lista de todos los archivos en la carpeta "Gen"
-    gen_files = os.listdir(ruta_entrada_3)
+    gen_files = sorted(os.listdir(ruta_entrada_3))
     
     for i in range(len(gen_files) - 1):
         image1_path = os.path.join(ruta_entrada_3, gen_files[i])
