@@ -402,7 +402,7 @@ def dyndef(ruta_entrada_3, ruta_salida_1, ddf_strength):
     if ddf_strength <= 0: # Condición 1: strength debe ser mayor a 0
         return
     imgs = []
-    files = os.listdir(ruta_entrada_3)
+    files = sorted(os.listdir(ruta_entrada_3))
     
     for file in files:
         img = cv2.imread(os.path.join(ruta_entrada_3, file))
