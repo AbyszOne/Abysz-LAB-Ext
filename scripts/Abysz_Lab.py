@@ -1098,10 +1098,10 @@ def add_tab():
                         with gr.Accordion("Info", open=False):
                             gr.Markdown("This process detects static areas between frames (white) and moving areas (black). Use preview map and you will understand this. Basically, it will force the white areas to stay the same on the next frame.")
                             gr.Markdown("DFI Tolerance adjusts how stiff this process is. Higher = more rigidity + corruption. Lower = more flexible, less corruption, but allows more flick. ")
-                            gr.Markdown("As complement, you can clean the source, to reduce detail and noise, or fatten/expand the areas detected by DFI. It is better that you use preview many times to experience how it works.")
+                            gr.Markdown("As complement, you can clean the map, to reduce detail and noise, or fatten/expand the areas detected by DFI. It is better that you use preview many times to experience how it works.")
                             gr.Markdown("### IMPORTANT: The general algorithm is optimized to maintain a balance between deflicking and corruption, so that it is easier to use StableDiffusion at low denoising to reconstruct lost detail while preserving the stability gained.")
                         with gr.Row():
-                            denoise_blur = gr.Slider(minimum=0, maximum=30, value=0, step=1, label="Source Denoise")
+                            denoise_blur = gr.Slider(minimum=0, maximum=30, value=0, step=1, label="Map Denoise")
                             dfi_strength = gr.Slider(minimum=0.5, maximum=20, value=5, step=0.5, label="DFI Tolerance")
                             dfi_deghost = gr.Slider(minimum=0, maximum=50, value=0, step=1, label="DFI Expand")
                         with gr.Accordion("Info", open=False):
@@ -1183,6 +1183,7 @@ def add_tab():
                         gr.Markdown("Instead, a much friendlier and faster way to use this tool is as an intermediate step. For this, you can allow a reasonable degree of corruption in exchange for more general stability. ")
                         gr.Markdown("You can then clean up the corruption and recover details with a second step in Stable Diffusion at low denoising (0.2-0.4), using the same parameters and seed.")
                         gr.Markdown("In this way, the final result will have the stability that we have gained, maintaining final detail. If you find a balanced workflow, you will get something at least much more coherent and stable than the raw AI render.")
+                        gr.Markdown("**OPTIONAL:** Although not ideal, you can use the same AI generated video as the source, instead of the RAW. The trick is to use DFI and denoise to wash out map details so that you reduce low/mid changes between frames. If you only need a soft deflick, it is a valid option.")
         
         dt_inputs=[ruta_entrada_1, ruta_entrada_2, denoise_blur, dfi_strength, dfi_deghost, test_mode, smooth]
         run_inputs=[ruta_entrada_1, ruta_entrada_2, ruta_salida, denoise_blur, dfi_strength, dfi_deghost, test_mode, inter_denoise, inter_denoise_size, inter_denoise_speed, fine_blur, frame_refresh_frequency, refresh_strength, smooth, frames_limit]
