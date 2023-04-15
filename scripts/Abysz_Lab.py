@@ -1092,7 +1092,7 @@ def add_tab():
                             gr.Markdown("# Abysz LAB 0.1.9 Temporal coherence tools")
                             gr.Markdown("## DFI Render")
                         with gr.Column():
-                            ruta_entrada_1 = gr.Textbox(label="Original frames folder", placeholder="The RAW frames you have used as base for IA generation.")
+                            ruta_entrada_1 = gr.Textbox(label="Original/reference frames folder", placeholder="RAW frames, or generated ones. (Read the strategies in the guide)")
                             ruta_entrada_2 = gr.Textbox(label="Generated frames folder", placeholder="The frames of AI generated video")
                             ruta_salida = gr.Textbox(label="Output folder", placeholder="Remember that each generation overwrites previous frames in the same folder.")
                         with gr.Accordion("Info", open=False):
